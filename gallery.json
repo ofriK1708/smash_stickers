@@ -10,12 +10,12 @@
       "name": "00000003-STICKER-2026-10-28-14-36-34.webp"
     },
     {
-      "file": "gifs/mvs3pfuu-00000004-sticker-2026-10-28-14-36-34.webp",
-      "name": "00000004-STICKER-2026-10-28-14-36-34.webp"
-    },
-    {
       "file": "gifs/mvs3phc2-00000005-sticker-2026-10-28-14-36-35.webp",
       "name": "00000005-STICKER-2026-10-28-14-36-35.webp"
+    },
+    {
+      "file": "gifs/mvs3pfuu-00000004-sticker-2026-10-28-14-36-34.webp",
+      "name": "00000004-STICKER-2026-10-28-14-36-34.webp"
     },
     {
       "file": "gifs/mvs3piou-00000006-sticker-2026-10-28-14-36-40.webp",
@@ -76,6 +76,10 @@
     {
       "file": "gifs/mvs3qaa0-00000020-sticker-2026-10-28-14-37-00.webp",
       "name": "00000020-STICKER-2026-10-28-14-37-00.webp"
+    },
+    {
+      "file": "gifs/mvs56un3-6e8afe1a-5846-47f8-b880-1a0f0ae02d03.jpg",
+      "name": "6e8afe1a-5846-47f8-b880-1a0f0ae02d03.jpeg"
     }
   ]
 }
