@@ -1,4 +1,9 @@
 {
   "title": "Our stickers",
-  "items": []
+  "items": [
+    {
+      "file": "gifs/mvs3cik0-sticker-1.webp",
+      "name": "sticker_1.webp"
+    }
+  ]
 }
