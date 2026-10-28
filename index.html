@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Our stickers</title>
+<meta name="theme-color" content="#fff8f1">
+<style>
+:root{--bg:#fff8f1;--card:#ffffff;--text:#1f1a17;--muted:#7a6f68;--line:#efe4d9;--accent:#ff5c39}
+@media (prefers-color-scheme:dark){:root{--bg:#16130f;--card:#221d18;--text:#f6efe8;--muted:#a89c92;--line:#332b24;--accent:#ff7a5c}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:28px 16px 12px;text-align:center}
+h1{margin:0;font-size:28px;letter-spacing:-0.5px}
+.count{margin:6px 0 0;color:var(--muted);font-size:14px}
+main{padding:8px 12px 40px;max-width:900px;margin:0 auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:16px;aspect-ratio:1;padding:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden}
+.tile img{max-width:100%;max-height:100%;object-fit:contain}
+.empty{text-align:center;color:var(--muted);padding:60px 0}
+.viewer{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px;z-index:10}
+.viewer.open{display:flex}
+.viewer img{max-width:100%;max-height:70vh;object-fit:contain}
+.row{display:flex;gap:10px}
+.btn{border:0;border-radius:999px;padding:12px 20px;font-size:15px;font-weight:600;background:#fff;color:#1f1a17;cursor:pointer}
+.btn.primary{background:var(--accent);color:#fff}
+</style>
+</head>
+<body>
+<header>
+<h1 id="title">Our stickers</h1>
+<p class="count" id="count">Loading…</p>
+</header>
+<main>
+<div class="grid" id="grid"></div>
+</main>
+<div class="viewer" id="viewer">
+<img id="big" alt="">
+<div class="row">
+<button class="btn" id="prev" aria-label="Previous">‹</button>
+<button class="btn primary" id="share">Save / share</button>
+<button class="btn" id="next" aria-label="Next">›</button>
+</div>
+<button class="btn" id="close">Close</button>
+</div>
+<script>
+let items=[],cur=0;
+const $=id=>document.getElementById(id);
+async function load(){
+  try{
+    const r=await fetch('gallery.json?t='+Date.now());
+    const data=await r.json();
+    items=data.items||[];
+    if(data.title){$('title').textContent=data.title;document.title=data.title}
+  }catch(e){items=[]}
+  render();
+}
+function render(){
+  const g=$('grid');g.innerHTML='';
+  $('count').textContent=items.length?items.length+' GIFs and stickers':'';
+  if(!items.length){g.outerHTML='<p class="empty">Nothing here yet. Check back soon.</p>';return}
+  items.forEach((it,i)=>{
+    const d=document.createElement('div');d.className='tile';
+    const im=document.createElement('img');im.src=it.file;im.alt=it.name||'';im.loading='lazy';
+    d.appendChild(im);d.onclick=()=>open(i);g.appendChild(d);
+  });
+}
+function open(i){cur=(i+items.length)%items.length;$('big').src=items[cur].file;$('viewer').classList.add('open')}
+$('close').onclick=()=>$('viewer').classList.remove('open');
+$('viewer').onclick=e=>{if(e.target.id==='viewer')$('viewer').classList.remove('open')};
+$('prev').onclick=()=>open(cur-1);
+$('next').onclick=()=>open(cur+1);
+$('share').onclick=async()=>{
+  const it=items[cur];
+  try{
+    const blob=await (await fetch(it.file)).blob();
+    const name=it.file.split('/').pop();
+    const file=new File([blob],name,{type:blob.type});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file]});return}
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
+  }catch(e){}
+};
+let sx=null;
+$('viewer').addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true});
+$('viewer').addEventListener('touchend',e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>50)open(cur+(dx<0?1:-1));sx=null});
+load();
+</script>
+</body>
+</html>
